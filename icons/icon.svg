@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="112" fill="#14594d"/>
+  <path d="M136 250 L256 150 L376 250 V372 a20 20 0 0 1 -20 20 H156 a20 20 0 0 1 -20 -20 Z" fill="none" stroke="#ffffff" stroke-width="28" stroke-linejoin="round"/>
+  <text x="256" y="358" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-weight="800" font-size="150" fill="#ffffff">5</text>
+</svg>

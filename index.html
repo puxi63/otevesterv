@@ -1,0 +1,629 @@
+<!doctype html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ötéves tervünk</title>
+<meta name="description" content="Közös ötéves terv: ház, kert, utazások.">
+<meta name="theme-color" content="#14594d">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Ötéves terv">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+  :root {
+    color-scheme: light;
+    --bg: #eef2ee;
+    --surface: #ffffff;
+    --surface-2: #f6f8f5;
+    --ink: #17221e;
+    --ink-2: #4b5a54;
+    --ink-3: #7d8b85;
+    --line: #d8e0db;
+    --accent: #14594d;
+    --accent-ink: #ffffff;
+    --accent-soft: #d9ebe5;
+    --focus: #2c8c7a;
+    --c-haz: #3f67a3;   --c-haz-soft: #e1e9f5;
+    --c-kert: #4f8a2e;  --c-kert-soft: #e3f0d9;
+    --c-ut: #c07a0e;    --c-ut-soft: #f8ecd6;
+    --c-egyeb: #85569a; --c-egyeb-soft: #efe4f4;
+    --s-otlet: #7d8b85; --s-terv: #3f67a3; --s-folyamat: #c07a0e; --s-kesz: #2f8a55;
+    --danger: #b3372b;
+    --shadow: 0 1px 2px rgba(20, 40, 32, .06), 0 4px 14px rgba(20, 40, 32, .06);
+    --display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+    --body: "Figtree", "Segoe UI", system-ui, -apple-system, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      color-scheme: dark;
+      --bg: #0f1614; --surface: #17211e; --surface-2: #1c2825; --ink: #e6eeea; --ink-2: #aebdb6; --ink-3: #7f8f88;
+      --line: #2a3834; --accent: #5cc2a9; --accent-ink: #0b1a16; --accent-soft: #1c3a33; --focus: #7fd8c1;
+      --c-haz: #86a8e0; --c-haz-soft: #1d2940; --c-kert: #93c870; --c-kert-soft: #1f2e18;
+      --c-ut: #eab25a; --c-ut-soft: #362a14; --c-egyeb: #c49ad6; --c-egyeb-soft: #2e2236;
+      --s-otlet: #8e9e97; --s-terv: #86a8e0; --s-folyamat: #eab25a; --s-kesz: #6ccf92; --danger: #f07c70;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 6px 18px rgba(0,0,0,.25);
+    }
+  }
+
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 15px; line-height: 1.45;
+         padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+  button, input, select, textarea { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+  .wrap { max-width: 1120px; margin: 0 auto; padding-inline: 16px; padding-block: 28px 80px; display: grid; gap: 22px; }
+
+  /* Header */
+  .top { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 16px; }
+  .eyebrow { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .eyebrow button { border: 0; background: none; padding: 0; color: var(--ink-3); text-decoration: underline; letter-spacing: .04em; text-transform: none; font-size: 12px; }
+  h1 { font-family: var(--display); font-weight: 800; font-size: clamp(30px, 5vw, 46px); line-height: 1; margin: 6px 0 0; letter-spacing: -.02em; text-wrap: balance; }
+  h1 span { color: var(--accent); }
+  .yearsbar { display: flex; gap: 4px; align-items: end; }
+  .yearsbar a { display: grid; gap: 4px; justify-items: center; text-decoration: none; color: var(--ink-2); font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums; min-width: 42px; }
+  .yearsbar a i { display: block; width: 100%; border-radius: 4px 4px 0 0; background: var(--accent-soft); min-height: 4px; transition: height .3s; }
+  .yearsbar a:hover i { background: var(--accent); }
+  .yearsbar a.now { color: var(--accent); }
+
+  .stats { display: flex; flex-wrap: wrap; gap: 10px 28px; padding: 14px 18px; background: var(--surface); border-radius: 14px; box-shadow: var(--shadow); }
+  .stat { display: grid; gap: 2px; }
+  .stat b { font-family: var(--display); font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .stat small { color: var(--ink-3); font-size: 12px; letter-spacing: .04em; text-transform: uppercase; font-weight: 600; }
+  .progress { flex: 1 1 180px; display: grid; align-content: center; gap: 6px; }
+  .progress .lbls { display: flex; justify-content: space-between; font-size: 13px; color: var(--ink-2); font-weight: 600; }
+  .progress .lbls span:last-child { font-variant-numeric: tabular-nums; }
+  .bar { height: 8px; background: var(--surface-2); border-radius: 99px; overflow: hidden; border: 1px solid var(--line); }
+  .bar i { display: block; height: 100%; background: var(--s-kesz); border-radius: 99px; transition: width .4s; }
+
+  /* Toolbar */
+  .toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { border: 1px solid var(--line); background: var(--surface); border-radius: 99px; padding: 6px 12px; font-size: 14px; font-weight: 600; color: var(--ink-2); display: inline-flex; gap: 6px; align-items: center; }
+  .chip .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ink-3); }
+  .chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .chip .n { font-variant-numeric: tabular-nums; opacity: .65; font-weight: 500; }
+  .toggle { display: inline-flex; gap: 6px; align-items: center; font-size: 14px; color: var(--ink-2); }
+  .toggle input { accent-color: var(--accent); width: 16px; height: 16px; }
+
+  .quick { display: flex; gap: 8px; background: var(--surface); border-radius: 14px; padding: 8px; box-shadow: var(--shadow); }
+  .quick input { flex: 1; min-width: 0; border: 0; background: transparent; padding: 10px; font-size: 16px; outline: none; }
+  .quick select { border: 1px solid var(--line); background: var(--surface-2); border-radius: 10px; padding: 0 8px; font-size: 14px; max-width: 120px; }
+  .btn { border: 0; border-radius: 10px; padding: 10px 16px; font-weight: 700; background: var(--accent); color: var(--accent-ink); white-space: nowrap; }
+  .btn.ghost { background: transparent; color: var(--ink-2); border: 1px solid var(--line); }
+  .btn.danger { background: transparent; color: var(--danger); border: 1px solid currentColor; }
+  .btn.danger.armed { background: var(--danger); color: #fff; border-color: var(--danger); }
+  .btn:disabled { opacity: .5; cursor: default; }
+
+  /* Year sections */
+  .board { display: grid; gap: 30px; }
+  .year { display: grid; gap: 12px; scroll-margin-top: 16px; }
+  .yhead { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; border-bottom: 2px solid var(--line); padding-bottom: 8px; }
+  .yhead h2 { font-family: var(--display); font-size: 28px; font-weight: 800; margin: 0; letter-spacing: -.01em; font-variant-numeric: tabular-nums; }
+  .yhead h2 small { font-family: var(--body); font-size: 14px; font-weight: 500; color: var(--ink-3); margin-left: 6px; letter-spacing: 0; }
+  .yhead .meta { color: var(--ink-3); font-size: 14px; font-variant-numeric: tabular-nums; margin-left: auto; }
+  .year.inbox .yhead h2 { color: var(--ink-2); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; }
+  .empty { color: var(--ink-3); font-size: 14px; padding: 14px; border: 1.5px dashed var(--line); border-radius: 12px; display: grid; gap: 10px; justify-items: start; }
+
+  .card { position: relative; text-align: left; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px 12px 16px; display: grid; gap: 8px; overflow: hidden; transition: transform .12s, box-shadow .12s; cursor: pointer; }
+  .card::before { content: ""; position: absolute; inset: 0 auto 0 0; width: 4px; background: var(--cat); }
+  .card:hover { transform: translateY(-1px); box-shadow: var(--shadow); }
+  .card.done { opacity: .62; }
+  .card.done .title { text-decoration: line-through; text-decoration-thickness: 1.5px; }
+  .card .row { display: flex; align-items: center; gap: 8px; justify-content: space-between; }
+  .card .title { font-weight: 600; font-size: 16px; line-height: 1.3; overflow-wrap: anywhere; }
+  .card .star { color: var(--c-ut); font-size: 15px; flex: none; }
+  .card .note { font-size: 13px; color: var(--ink-2); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 12px; }
+  .tag { padding: 2px 8px; border-radius: 99px; font-weight: 600; background: var(--cat-soft); color: var(--cat); }
+  .season { color: var(--ink-3); font-weight: 500; }
+  .cost { margin-left: auto; font-weight: 600; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+  .status { border: 1px solid var(--line); background: var(--surface-2); border-radius: 99px; padding: 2px 9px 2px 7px; font-size: 12px; font-weight: 600; display: inline-flex; gap: 5px; align-items: center; color: var(--ink-2); }
+  .status::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--st); }
+  .status:hover { border-color: var(--st); }
+
+  [data-cat="haz"] { --cat: var(--c-haz); --cat-soft: var(--c-haz-soft); }
+  [data-cat="kert"] { --cat: var(--c-kert); --cat-soft: var(--c-kert-soft); }
+  [data-cat="utazas"] { --cat: var(--c-ut); --cat-soft: var(--c-ut-soft); }
+  [data-cat="egyeb"] { --cat: var(--c-egyeb); --cat-soft: var(--c-egyeb-soft); }
+  .chip[data-cat] .dot { background: var(--cat); }
+  [data-st="otlet"] { --st: var(--s-otlet); }
+  [data-st="tervezve"] { --st: var(--s-terv); }
+  [data-st="folyamatban"] { --st: var(--s-folyamat); }
+  [data-st="kesz"] { --st: var(--s-kesz); }
+
+  .notice { padding: 12px 16px; border-radius: 12px; background: var(--c-ut-soft); color: var(--ink); font-size: 14px; }
+
+  /* Sign-in screen */
+  .gate { min-height: 100dvh; display: grid; place-items: center; padding: 16px; }
+  .gate-card { background: var(--surface); border-radius: 20px; box-shadow: var(--shadow); padding: 32px 28px; width: min(420px, 100%); display: grid; gap: 16px; }
+  .gate-card h1 { font-size: 36px; }
+  .gate-card p { margin: 0; color: var(--ink-2); }
+  .gate-card .small { font-size: 13px; color: var(--ink-3); }
+  .gbtn { display: flex; gap: 10px; align-items: center; justify-content: center; padding: 12px 16px; font-size: 16px; }
+  .gbtn svg { width: 18px; height: 18px; flex: none; }
+
+  /* Editor sheet */
+  .overlay { position: fixed; inset: 0; background: rgba(8, 18, 14, .45); display: grid; place-items: center; padding: 16px; z-index: 10; }
+  .sheet { background: var(--surface); border-radius: 18px; width: min(560px, 100%); max-height: calc(100% - 16px); overflow: auto; padding: 22px; display: grid; gap: 16px; box-shadow: 0 20px 60px rgba(0,0,0,.3); }
+  .sheet h3 { margin: 0; font-family: var(--display); font-size: 22px; font-weight: 700; }
+  .sheet .who { font-size: 12px; color: var(--ink-3); margin-top: -10px; }
+  .field { display: grid; gap: 6px; }
+  .field > label, .field > .lbl { font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
+  .field input[type="text"], .field input[type="number"], .field select, .field textarea { width: 100%; border: 1px solid var(--line); background: var(--surface-2); border-radius: 10px; padding: 10px 12px; font-size: 16px; }
+  .field textarea { min-height: 80px; resize: vertical; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .seg { display: flex; flex-wrap: wrap; gap: 6px; }
+  .seg button { border: 1px solid var(--line); background: var(--surface-2); border-radius: 99px; padding: 6px 12px; font-size: 14px; font-weight: 600; color: var(--ink-2); }
+  .seg button[aria-pressed="true"] { background: var(--cat, var(--st, var(--accent))); border-color: transparent; color: var(--surface); }
+  .seg.years button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+  .actions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: space-between; align-items: center; }
+  .actions .right { display: flex; gap: 8px; margin-left: auto; }
+  .check { display: inline-flex; gap: 8px; align-items: center; font-weight: 600; }
+  .check input { width: 18px; height: 18px; accent-color: var(--c-ut); }
+
+  .toast { position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 10px; font-size: 14px; font-weight: 600; z-index: 20; box-shadow: var(--shadow); max-width: calc(100% - 32px); }
+
+  @media (max-width: 560px) {
+    .two { grid-template-columns: 1fr; }
+    .yearsbar { display: none; }
+    .quick { flex-wrap: wrap; }
+    .quick input { flex-basis: 100%; }
+    .quick select { flex: 1; max-width: none; padding-block: 8px; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<!-- Sign-in screen -->
+<div class="gate" id="gate" hidden>
+  <div class="gate-card">
+    <div class="eyebrow">Közös terv · ház, kert, utazások</div>
+    <h1>Ötéves tervünk <span>2026–2030</span></h1>
+    <p id="gateText">Lépj be a Google-fiókoddal. Csak a mi két címünk fér hozzá.</p>
+    <button class="btn gbtn" id="signIn" type="button">
+      <svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 13 4 4 13 4 24s9 20 20 20 20-9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>
+      Belépés Google-fiókkal
+    </button>
+    <button class="btn ghost" id="signOutGate" type="button" hidden>Másik fiókkal lépek be</button>
+    <p class="small" id="gateSmall"></p>
+  </div>
+</div>
+
+<!-- Main app -->
+<div class="wrap" id="app" hidden>
+  <header class="top">
+    <div>
+      <div class="eyebrow"><span>Közös terv · ház, kert, utazások</span><span id="who"></span><button type="button" id="signOut">Kilépés</button></div>
+      <h1>Ötéves tervünk <span>2026–2030</span></h1>
+    </div>
+    <nav class="yearsbar" id="yearsbar" aria-label="Ugrás évre"></nav>
+  </header>
+
+  <section class="stats" id="stats" aria-label="Összesítés"></section>
+
+  <form class="quick" id="quick" autocomplete="off">
+    <input id="quickTitle" type="text" placeholder="Új terv, pl. Balaton hétvége vagy Kerti tó…" aria-label="Új terv megnevezése">
+    <select id="quickCat" aria-label="Kategória"></select>
+    <select id="quickYear" aria-label="Év"></select>
+    <button class="btn" type="submit">Hozzáadás</button>
+  </form>
+
+  <div class="toolbar">
+    <div class="chips" id="chips" role="group" aria-label="Szűrés kategóriára"></div>
+    <label class="toggle"><input type="checkbox" id="hideDone"> Kész tételek elrejtése</label>
+  </div>
+
+  <div id="notice" hidden></div>
+  <main class="board" id="board"></main>
+</div>
+
+<div class="overlay" id="overlay" hidden>
+  <form class="sheet" id="editor" role="dialog" aria-modal="true" aria-labelledby="edTitleH" autocomplete="off">
+    <h3 id="edTitleH">Terv szerkesztése</h3>
+    <div class="who" id="edWho"></div>
+    <div class="field">
+      <label for="edTitle">Megnevezés</label>
+      <input type="text" id="edTitle" required maxlength="120">
+    </div>
+    <div class="field"><span class="lbl">Kategória</span><div class="seg" id="edCat"></div></div>
+    <div class="field"><span class="lbl">Melyik évben?</span><div class="seg years" id="edYear"></div></div>
+    <div class="two">
+      <div class="field">
+        <label for="edSeason">Mikor az évben?</label>
+        <select id="edSeason"></select>
+      </div>
+      <div class="field">
+        <label for="edCost">Becsült költség (Ft)</label>
+        <input type="number" id="edCost" min="0" step="10000" inputmode="numeric" placeholder="pl. 450000">
+      </div>
+    </div>
+    <div class="field"><span class="lbl">Állapot</span><div class="seg" id="edStatus"></div></div>
+    <div class="field">
+      <label for="edNote">Megjegyzés</label>
+      <textarea id="edNote" maxlength="2000" placeholder="Árajánlat, link, ötlet, kinek kell szólni…"></textarea>
+    </div>
+    <label class="check"><input type="checkbox" id="edStar"> Fontos, ezzel kezdjük</label>
+    <div class="actions">
+      <button type="button" class="btn danger" id="edDelete">Törlés</button>
+      <div class="right">
+        <button type="button" class="btn ghost" id="edCancel">Mégse</button>
+        <button type="submit" class="btn" id="edSave">Mentés</button>
+      </div>
+    </div>
+  </form>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+
+<script type="module">
+import { firebaseConfig } from "./firebase-config.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut,
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {
+  initializeFirestore, persistentLocalCache, persistentMultipleTabManager,
+  collection, doc, onSnapshot, addDoc, updateDoc, deleteDoc, writeBatch,
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const YEARS = [2026, 2027, 2028, 2029, 2030];
+const CATS = [
+  { id: "haz", label: "Ház" },
+  { id: "kert", label: "Kert" },
+  { id: "utazas", label: "Utazás" },
+  { id: "egyeb", label: "Egyéb" },
+];
+const STATUSES = [
+  { id: "otlet", label: "Ötlet" },
+  { id: "tervezve", label: "Tervezve" },
+  { id: "folyamatban", label: "Folyamatban" },
+  { id: "kesz", label: "Kész" },
+];
+const SEASONS = ["", "Tavasz", "Nyár", "Ősz", "Tél", "Egész évben"];
+// Starter list, loaded only when the user asks for it on an empty board.
+const STARTER = [
+  ["Kerítés", "kert"], ["Szigetelés", "haz"], ["Fűtőtestek", "haz"], ["Ház előtti fák / parkoló", "kert"],
+  ["Orgona", "kert"], ["Sziklakert", "kert"], ["Tuják", "kert"], ["Terasz építés", "kert"], ["Homokozó", "kert"],
+  ["Lomtalanítás", "haz"], ["Gardróbszekrény a folyosóra", "haz"], ["Konyha", "haz"], ["Vízlágyító", "haz"], ["Ágy", "haz"],
+];
+const catLabel = id => (CATS.find(c => c.id === id) || CATS[3]).label;
+const stLabel = id => (STATUSES.find(s => s.id === id) || STATUSES[0]).label;
+
+const $ = id => document.getElementById(id);
+const state = { items: [], filter: "all", hideDone: false, editing: null, loaded: false, user: null };
+let col = null;
+let unsub = null;
+
+try { state.hideDone = localStorage.getItem("hideDone") === "1"; } catch (e) {}
+try { state.filter = localStorage.getItem("filter") || "all"; } catch (e) {}
+$("hideDone").checked = state.hideDone;
+
+const fmtFt = n => {
+  if (!n) return "";
+  if (n >= 1e6) return (Math.round(n / 1e5) / 10).toLocaleString("hu-HU") + " M Ft";
+  if (n >= 1e3) return Math.round(n / 1e3).toLocaleString("hu-HU") + " e Ft";
+  return n.toLocaleString("hu-HU") + " Ft";
+};
+const fmtWhen = ms => ms ? new Date(ms).toLocaleString("hu-HU", { year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }) : "";
+const el = (tag, attrs, ...kids) => {
+  const n = document.createElement(tag);
+  for (const k in attrs || {}) {
+    if (k === "class") n.className = attrs[k];
+    else if (k.startsWith("on")) n.addEventListener(k.slice(2), attrs[k]);
+    else if (attrs[k] !== null && attrs[k] !== undefined) n.setAttribute(k, attrs[k]);
+  }
+  for (const k of kids) if (k !== null && k !== undefined && k !== false) n.append(k);
+  return n;
+};
+
+let toastT;
+function toast(msg) {
+  const t = $("toast"); t.textContent = msg; t.hidden = false;
+  clearTimeout(toastT); toastT = setTimeout(() => (t.hidden = true), 2400);
+}
+function showNotice(msg) { const n = $("notice"); n.className = "notice"; n.textContent = msg; n.hidden = !msg; }
+function errText(e) {
+  const code = e && e.code || "";
+  if (code === "permission-denied") return "Ehhez a fiókhoz nincs hozzáférés.";
+  if (code === "resource-exhausted") return "Elértük az ingyenes napi keretet. Holnap újra működik.";
+  return "Nem sikerült menteni. Próbáld újra.";
+}
+
+// Static selects
+for (const c of CATS) $("quickCat").append(el("option", { value: c.id }, c.label));
+$("quickYear").append(el("option", { value: "" }, "Még nincs év"));
+for (const y of YEARS) $("quickYear").append(el("option", { value: String(y) }, String(y)));
+for (const s of SEASONS) $("edSeason").append(el("option", { value: s }, s || "Nem tudjuk még"));
+
+function visible() {
+  return state.items.filter(i => (state.filter === "all" || i.cat === state.filter) && !(state.hideDone && i.status === "kesz"));
+}
+function sortItems(a, b) {
+  return (a.status === "kesz") - (b.status === "kesz")
+    || (b.star ? 1 : 0) - (a.star ? 1 : 0)
+    || (a.created || 0) - (b.created || 0);
+}
+
+function renderStats() {
+  const scoped = state.items.filter(i => state.filter === "all" || i.cat === state.filter);
+  const done = scoped.filter(i => i.status === "kesz").length;
+  const cost = scoped.reduce((s, i) => s + (i.cost || 0), 0);
+  const open = scoped.filter(i => i.status !== "kesz").reduce((s, i) => s + (i.cost || 0), 0);
+  const unscheduled = scoped.filter(i => !i.year).length;
+  const pct = scoped.length ? Math.round(done / scoped.length * 100) : 0;
+  $("stats").replaceChildren(
+    el("div", { class: "stat" }, el("b", null, String(scoped.length)), el("small", null, "terv")),
+    el("div", { class: "stat" }, el("b", null, String(unscheduled)), el("small", null, "még nincs éve")),
+    el("div", { class: "stat" }, el("b", null, fmtFt(open) || "0 Ft"), el("small", null, cost !== open ? "hátralévő költség" : "becsült költség")),
+    el("div", { class: "progress" },
+      el("div", { class: "lbls" }, el("span", null, "Megvalósítva"), el("span", null, done + " / " + scoped.length + " · " + pct + "%")),
+      el("div", { class: "bar" }, el("i", { style: "width:" + pct + "%" })))
+  );
+}
+
+function renderYearsBar() {
+  const nowY = new Date().getFullYear();
+  const counts = YEARS.map(y => state.items.filter(i => i.year === y && (state.filter === "all" || i.cat === state.filter)).length);
+  const max = Math.max(1, ...counts);
+  $("yearsbar").replaceChildren(...YEARS.map((y, idx) =>
+    el("a", { href: "#y" + y, class: y === nowY ? "now" : "", title: counts[idx] + " terv" },
+      el("i", { style: "height:" + (4 + Math.round(counts[idx] / max * 34)) + "px" }), String(y))));
+}
+
+function renderChips() {
+  const mk = (id, label, n) => el("button", {
+    type: "button", class: "chip", "data-cat": id === "all" ? null : id, "aria-pressed": String(state.filter === id),
+    onclick: () => { state.filter = id; try { localStorage.setItem("filter", id); } catch (e) {} render(); }
+  }, id === "all" ? null : el("span", { class: "dot" }), label, el("span", { class: "n" }, String(n)));
+  $("chips").replaceChildren(
+    mk("all", "Mind", state.items.length),
+    ...CATS.map(c => mk(c.id, c.label, state.items.filter(i => i.cat === c.id).length)));
+}
+
+function card(item) {
+  const nextStatus = () => {
+    const idx = STATUSES.findIndex(s => s.id === item.status);
+    return STATUSES[(idx + 1) % STATUSES.length].id;
+  };
+  const statusBtn = el("button", {
+    type: "button", class: "status", "data-st": item.status, title: "Koppints a következő állapotért",
+    onclick: e => { e.stopPropagation(); save(item.id, { status: nextStatus() }, true); }
+  }, stLabel(item.status));
+  return el("div", {
+    class: "card" + (item.status === "kesz" ? " done" : ""), "data-cat": item.cat, role: "button", tabindex: "0",
+    onclick: () => openEditor(item), onkeydown: e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openEditor(item); } }
+  },
+    el("div", { class: "row" }, el("span", { class: "title" }, item.title), item.star ? el("span", { class: "star", title: "Fontos" }, "★") : null),
+    item.note ? el("div", { class: "note" }, item.note) : null,
+    el("div", { class: "tags" },
+      el("span", { class: "tag" }, catLabel(item.cat)),
+      statusBtn,
+      item.season ? el("span", { class: "season" }, item.season) : null,
+      item.cost ? el("span", { class: "cost" }, fmtFt(item.cost)) : null)
+  );
+}
+
+function section(key, heading, sub, items) {
+  const cost = items.reduce((s, i) => s + (i.cost || 0), 0);
+  const trips = items.filter(i => i.cat === "utazas").length;
+  const meta = [items.length + " terv", trips ? trips + " utazás" : null, cost ? fmtFt(cost) : null].filter(Boolean).join(" · ");
+  const grid = items.length
+    ? el("div", { class: "grid" }, ...items.map(card))
+    : el("div", { class: "empty" }, key === "inbox"
+        ? "Minden ötletnek van már éve. Új ötletet fent tudtok felvenni."
+        : "Erre az évre még nincs terv. Nyissatok meg egy ötletet az ötletládából, és válasszátok ki ezt az évet.");
+  return el("section", { class: "year" + (key === "inbox" ? " inbox" : ""), id: key === "inbox" ? "inbox" : "y" + key },
+    el("div", { class: "yhead" }, el("h2", null, heading, sub ? el("small", null, sub) : null), el("span", { class: "meta" }, meta)),
+    grid);
+}
+
+function starterPrompt() {
+  return el("div", { class: "empty" },
+    "Még üres a terv. Felvehettek tételeket egyenként fent, vagy betölthetitek a kiinduló listát (kerítés, szigetelés, konyha és a többi, összesen " + STARTER.length + " tétel).",
+    el("button", { type: "button", class: "btn", onclick: loadStarter }, "Kiinduló lista betöltése"));
+}
+
+function render() {
+  renderChips(); renderStats(); renderYearsBar();
+  const board = $("board");
+  if (!state.loaded) { board.replaceChildren(el("div", { class: "empty" }, "Tervek betöltése…")); return; }
+  if (!state.items.length) { board.replaceChildren(starterPrompt()); return; }
+  const vis = visible();
+  const inbox = vis.filter(i => !i.year).sort(sortItems);
+  const parts = [];
+  if (inbox.length || state.items.some(i => !i.year)) parts.push(section("inbox", "Ötletláda", "még nincs éve", inbox));
+  for (const y of YEARS) parts.push(section(y, String(y), null, vis.filter(i => i.year === y).sort(sortItems)));
+  board.replaceChildren(...parts);
+}
+
+// Editor
+let draft = null;
+function segButtons(host, options, current, attr, onPick) {
+  host.replaceChildren(...options.map(o => {
+    const b = el("button", { type: "button", "aria-pressed": String(o.id === current), onclick: () => onPick(o.id) }, o.label);
+    if (attr) b.setAttribute(attr, o.id);
+    return b;
+  }));
+}
+function paintEditor() {
+  segButtons($("edCat"), CATS, draft.cat, "data-cat", v => { draft.cat = v; paintEditor(); });
+  segButtons($("edYear"), [{ id: null, label: "Még nincs" }, ...YEARS.map(y => ({ id: y, label: String(y) }))], draft.year, null, v => { draft.year = v; paintEditor(); });
+  segButtons($("edStatus"), STATUSES, draft.status, "data-st", v => { draft.status = v; paintEditor(); });
+}
+function openEditor(item) {
+  state.editing = item ? item.id : null;
+  draft = { cat: item ? item.cat : "haz", year: item ? item.year || null : null, status: item ? item.status : "otlet" };
+  $("edTitleH").textContent = item ? "Terv szerkesztése" : "Új terv";
+  $("edWho").textContent = item && item.updatedBy ? "Utoljára módosította: " + item.updatedBy + ", " + fmtWhen(item.updated) : "";
+  $("edTitle").value = item ? item.title : "";
+  $("edSeason").value = item ? item.season || "" : "";
+  $("edCost").value = item && item.cost ? String(item.cost) : "";
+  $("edNote").value = item ? item.note || "" : "";
+  $("edStar").checked = !!(item && item.star);
+  $("edDelete").hidden = !item;
+  disarmDelete();
+  paintEditor();
+  $("overlay").hidden = false;
+  setTimeout(() => $("edTitle").focus(), 30);
+}
+function closeEditor() { $("overlay").hidden = true; state.editing = null; }
+
+let armT;
+function disarmDelete() { clearTimeout(armT); const b = $("edDelete"); b.classList.remove("armed"); b.textContent = "Törlés"; }
+$("edDelete").addEventListener("click", async () => {
+  const b = $("edDelete");
+  if (!b.classList.contains("armed")) {
+    b.classList.add("armed"); b.textContent = "Biztosan törlöd?";
+    armT = setTimeout(disarmDelete, 4000); return;
+  }
+  const id = state.editing; closeEditor();
+  try { await deleteDoc(doc(col, id)); toast("Törölve"); }
+  catch (e) { toast(errText(e)); }
+});
+$("edCancel").addEventListener("click", closeEditor);
+$("overlay").addEventListener("click", e => { if (e.target === $("overlay")) closeEditor(); });
+document.addEventListener("keydown", e => { if (e.key === "Escape" && !$("overlay").hidden) closeEditor(); });
+
+$("editor").addEventListener("submit", e => {
+  e.preventDefault();
+  const title = $("edTitle").value.trim();
+  if (!title) { $("edTitle").focus(); return; }
+  const cost = Math.max(0, Math.round(Number($("edCost").value) || 0));
+  const body = {
+    title, cat: draft.cat, year: draft.year, status: draft.status,
+    season: $("edSeason").value, cost, note: $("edNote").value.trim(), star: $("edStar").checked,
+  };
+  const id = state.editing; closeEditor();
+  if (id) save(id, body); else create(body);
+});
+
+$("quick").addEventListener("submit", e => {
+  e.preventDefault();
+  const title = $("quickTitle").value.trim();
+  if (!title) { $("quickTitle").focus(); return; }
+  const y = $("quickYear").value;
+  create({ title, cat: $("quickCat").value, year: y ? Number(y) : null, status: "otlet", season: "", cost: 0, note: "", star: false });
+  $("quickTitle").value = "";
+});
+
+$("hideDone").addEventListener("change", e => {
+  state.hideDone = e.target.checked;
+  try { localStorage.setItem("hideDone", state.hideDone ? "1" : "0"); } catch (err) {}
+  render();
+});
+
+// Persistence. Writes are fire-and-forget from the UI: the local cache shows them at once,
+// and Firestore syncs them when the phone is back online.
+const myName = () => (state.user && (state.user.displayName || state.user.email || "")).split(" ")[0] || "";
+function save(id, patch, quiet) {
+  updateDoc(doc(col, id), { ...patch, updated: Date.now(), updatedBy: myName() })
+    .catch(e => toast(errText(e)));
+  if (!quiet) toast("Mentve");
+}
+function create(body) {
+  const now = Date.now();
+  addDoc(col, { ...body, created: now, updated: now, updatedBy: myName() }).catch(e => toast(errText(e)));
+  toast("Hozzáadva: " + body.title);
+}
+async function loadStarter() {
+  const batch = writeBatch(fs);
+  const now = Date.now();
+  STARTER.forEach(([title, cat], i) => batch.set(doc(col), {
+    title, cat, year: null, status: "otlet", season: "", cost: 0, note: "", star: false,
+    created: now + i, updated: now + i, updatedBy: myName(),
+  }));
+  try { await batch.commit(); toast("Betöltve " + STARTER.length + " tétel"); }
+  catch (e) { toast(errText(e)); }
+}
+
+// Boot
+function showGate(text, small, canSwitch) {
+  $("app").hidden = true; $("gate").hidden = false;
+  $("gateText").textContent = text;
+  $("gateSmall").textContent = small || "";
+  $("signIn").hidden = !!canSwitch;
+  $("signOutGate").hidden = !canSwitch;
+}
+
+if (!firebaseConfig || !firebaseConfig.apiKey || firebaseConfig.apiKey.startsWith("IDE_")) {
+  showGate("Az app még nincs összekötve az adatbázissal.", "Töltsd ki a firebase-config.js fájlt az OLVASSEL.md leírása szerint.", false);
+  $("signIn").hidden = true;
+  throw new Error("firebase-config.js is not filled in");
+}
+
+const fbApp = initializeApp(firebaseConfig);
+const auth = getAuth(fbApp);
+auth.languageCode = "hu";
+const fs = initializeFirestore(fbApp, { localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }) });
+col = collection(fs, "items");
+
+getRedirectResult(auth).catch(e => { $("gateSmall").textContent = "A belépés nem sikerült: " + (e.code || e.message); });
+
+$("signIn").addEventListener("click", async () => {
+  const provider = new GoogleAuthProvider();
+  provider.setCustomParameters({ prompt: "select_account" });
+  try { await signInWithPopup(auth, provider); }
+  catch (e) {
+    if (e.code === "auth/popup-blocked" || e.code === "auth/operation-not-supported-in-this-environment") {
+      await signInWithRedirect(auth, provider);
+    } else if (e.code !== "auth/popup-closed-by-user" && e.code !== "auth/cancelled-popup-request") {
+      $("gateSmall").textContent = "A belépés nem sikerült: " + (e.code || e.message);
+    }
+  }
+});
+const doSignOut = () => signOut(auth);
+$("signOut").addEventListener("click", doSignOut);
+$("signOutGate").addEventListener("click", doSignOut);
+
+onAuthStateChanged(auth, user => {
+  if (unsub) { unsub(); unsub = null; }
+  state.user = user; state.items = []; state.loaded = false;
+  if (!user) {
+    showGate("Lépj be a Google-fiókoddal. Csak a mi két címünk fér hozzá.", "", false);
+    return;
+  }
+  $("gate").hidden = true; $("app").hidden = false;
+  $("who").textContent = user.email || "";
+  showNotice("");
+  render();
+  unsub = onSnapshot(col, snap => {
+    state.items = snap.docs.map(d => {
+      const x = d.data() || {};
+      return {
+        id: d.id, title: String(x.title || "Névtelen"), cat: CATS.some(c => c.id === x.cat) ? x.cat : "egyeb",
+        year: YEARS.includes(x.year) ? x.year : null, status: STATUSES.some(s => s.id === x.status) ? x.status : "otlet",
+        season: typeof x.season === "string" ? x.season : "", cost: Number(x.cost) || 0,
+        note: typeof x.note === "string" ? x.note : "", star: !!x.star, created: Number(x.created) || 0,
+        updated: Number(x.updated) || 0, updatedBy: typeof x.updatedBy === "string" ? x.updatedBy : "",
+      };
+    });
+    state.loaded = true;
+    render();
+  }, err => {
+    if (err.code === "permission-denied") {
+      showGate("Ez a fiók (" + (user.email || "") + ") nincs a hozzáférési listán.",
+        "Lépj be azzal a Google-fiókkal, amelyik szerepel a Firestore-szabályokban.", true);
+    } else {
+      state.loaded = true;
+      showNotice("Nem sikerült betölteni a terveket (" + err.code + "). Töltsd újra az oldalt.");
+      render();
+    }
+  });
+});
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
+}
+</script>
+</body>
+</html>

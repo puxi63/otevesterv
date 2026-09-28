@@ -1,0 +1,20 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Only these two Google accounts may read or write. Write the addresses in lowercase.
+    function isUs() {
+      return request.auth != null
+        && request.auth.token.email_verified == true
+        && request.auth.token.email.lower() in ['v.tomi633@gmail.com', 'varga.emese95@gmail.com'];
+    }
+
+    match /items/{itemId} {
+      allow read, write: if isUs();
+    }
+
+    // Everything else is closed.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
