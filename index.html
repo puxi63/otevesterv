@@ -198,6 +198,54 @@
 
   .toast { position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 10px; font-size: 14px; font-weight: 600; z-index: 20; box-shadow: var(--shadow); max-width: calc(100% - 32px); }
 
+  /* Search, owner filter, export */
+  .filters { display: grid; gap: 10px; }
+  .searchrow { display: flex; gap: 8px; align-items: center; }
+  .search { flex: 1; min-width: 0; border: 1px solid var(--line); background: var(--surface); border-radius: 12px; padding: 10px 14px; font-size: 16px; }
+  .chip.person { padding-left: 6px; }
+  .mono { display: inline-grid; place-items: center; min-width: 22px; height: 22px; padding: 0 5px; border-radius: 99px; background: var(--accent-soft); color: var(--accent); font-size: 11px; font-weight: 800; letter-spacing: .02em; flex: none; }
+  .chip[aria-pressed="true"] .mono { background: var(--bg); }
+
+  /* Budget per year */
+  .budget { flex-basis: 100%; display: grid; gap: 6px; font-size: 13px; color: var(--ink-2); }
+  .budget .blbl { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; font-variant-numeric: tabular-nums; }
+  .budget .blbl b { font-weight: 700; color: var(--ink); }
+  .budget .over { color: var(--danger); font-weight: 700; }
+  .budget .bar i.over { background: var(--danger); }
+  .budget .bar i.ok { background: var(--accent); }
+  .linkbtn { border: 0; background: none; padding: 0; color: var(--accent); font-weight: 600; font-size: 13px; text-decoration: underline; text-underline-offset: 2px; }
+  .budget form { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .budget input { width: 160px; border: 1px solid var(--line); background: var(--surface-2); border-radius: 10px; padding: 7px 10px; font-size: 16px; }
+  .budget .btn { padding: 7px 12px; }
+
+  /* Card extras */
+  .card .meta2 { display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: 12px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+  .card .meta2 .soon { color: var(--c-ut); font-weight: 700; }
+  .card .trip { font-size: 13px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+  .card .minibar { height: 4px; background: var(--surface-2); border-radius: 99px; overflow: hidden; }
+  .card .minibar i { display: block; height: 100%; background: var(--s-kesz); }
+  .card[draggable="true"] { cursor: grab; }
+  .card.dragging { opacity: .4; }
+  .year.drop .grid, .year.drop .empty { outline: 2px dashed var(--accent); outline-offset: 4px; border-radius: 12px; }
+  .cost s { color: var(--ink-3); font-weight: 500; margin-right: 4px; }
+
+  /* Editor extras */
+  .group { display: grid; gap: 12px; padding: 14px; border-radius: 14px; background: var(--surface-2); border: 1px solid var(--line); }
+  .group .field input[type="text"], .group .field input[type="number"], .group .field input[type="date"], .group .field textarea { background: var(--surface); }
+  .field input[type="date"] { width: 100%; border: 1px solid var(--line); background: var(--surface-2); border-radius: 10px; padding: 9px 12px; font-size: 16px; }
+  .tasks { display: grid; gap: 6px; }
+  .task { display: flex; gap: 8px; align-items: center; }
+  .task input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--s-kesz); flex: none; }
+  .task input[type="text"] { flex: 1; min-width: 0; border: 1px solid transparent; background: transparent; border-radius: 8px; padding: 6px 8px; font-size: 15px; }
+  .task input[type="text"]:focus { border-color: var(--line); background: var(--surface); }
+  .task.done input[type="text"] { text-decoration: line-through; color: var(--ink-3); }
+  .task .x { border: 0; background: none; color: var(--ink-3); font-size: 18px; line-height: 1; padding: 4px 6px; border-radius: 6px; }
+  .task .x:hover { color: var(--danger); }
+  .addtask { border: 1px dashed var(--line) !important; background: transparent !important; }
+  .links { display: flex; flex-wrap: wrap; gap: 6px; }
+  .links a, .tel { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 99px; background: var(--accent-soft); color: var(--accent); font-size: 13px; font-weight: 600; text-decoration: none; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .hint { font-size: 12px; color: var(--ink-3); }
+
   @media (max-width: 560px) {
     .two { grid-template-columns: 1fr; }
     .yearsbar { display: none; }
@@ -299,9 +347,16 @@
     <button class="btn" type="submit">Hozzáadás</button>
   </form>
 
-  <div class="toolbar">
+  <div class="filters">
+    <div class="searchrow">
+      <input class="search" id="search" type="search" placeholder="Keresés: konyha, Krk, villanyszerelő…" aria-label="Keresés a tervekben" autocomplete="off">
+      <button class="btn ghost" id="exportCsv" type="button" title="Az összes terv letöltése táblázatként">CSV-mentés</button>
+    </div>
     <div class="chips" id="chips" role="group" aria-label="Szűrés kategóriára"></div>
-    <label class="toggle"><input type="checkbox" id="hideDone"> Kész tételek elrejtése</label>
+    <div class="toolbar">
+      <div class="chips" id="ownerChips" role="group" aria-label="Szűrés arra, ki intézi"></div>
+      <label class="toggle"><input type="checkbox" id="hideDone"> Kész tételek elrejtése</label>
+    </div>
   </div>
 
   <div id="notice" hidden></div>
@@ -318,20 +373,53 @@
     </div>
     <div class="field"><span class="lbl">Kategória</span><div class="seg" id="edCat"></div></div>
     <div class="field"><span class="lbl">Melyik évben?</span><div class="seg years" id="edYear"></div></div>
-    <div class="two">
+    <div class="group" id="edTrip" hidden>
       <div class="field">
-        <label for="edSeason">Mikor az évben?</label>
-        <select id="edSeason"></select>
+        <label for="edPlace">Úti cél</label>
+        <input type="text" id="edPlace" maxlength="120" placeholder="pl. Krk, Horvátország">
       </div>
+      <div class="two">
+        <div class="field"><label for="edStart">Indulás</label><input type="date" id="edStart"></div>
+        <div class="field"><label for="edEnd">Hazaérkezés</label><input type="date" id="edEnd"></div>
+      </div>
+      <div class="hint">Ha megadjátok az indulást, az évet is beállítja, és a tetején visszaszámol.</div>
+    </div>
+    <div class="field">
+      <label for="edSeason">Mikor az évben?</label>
+      <select id="edSeason"></select>
+    </div>
+    <div class="two">
       <div class="field">
         <label for="edCost">Becsült költség (Ft)</label>
         <input type="number" id="edCost" min="0" step="10000" inputmode="numeric" placeholder="pl. 450000">
       </div>
+      <div class="field">
+        <label for="edActual">Tényleges költség (Ft)</label>
+        <input type="number" id="edActual" min="0" step="1000" inputmode="numeric" placeholder="ha már tudjátok">
+      </div>
     </div>
     <div class="field"><span class="lbl">Állapot</span><div class="seg" id="edStatus"></div></div>
+    <div class="field"><span class="lbl">Ki intézi?</span><div class="seg" id="edOwner"></div></div>
+    <div class="field">
+      <span class="lbl">Részfeladatok</span>
+      <div class="tasks" id="edTasks"></div>
+      <div class="task">
+        <input type="text" id="edNewTask" class="addtask" maxlength="200" placeholder="+ Új lépés, pl. árajánlatot kérni (Enter)" aria-label="Új részfeladat">
+      </div>
+    </div>
+    <div class="field">
+      <label for="edContact">Mesterember, kapcsolat</label>
+      <input type="text" id="edContact" maxlength="200" placeholder="pl. Kovács Béla villanyszerelő, +36 30 123 4567">
+      <div class="links" id="edContactOut"></div>
+    </div>
+    <div class="field">
+      <label for="edLinks">Linkek (soronként egy)</label>
+      <textarea id="edLinks" maxlength="3000" placeholder="https://… árajánlat, webshop, Pinterest, szállásfoglalás"></textarea>
+      <div class="links" id="edLinksOut"></div>
+    </div>
     <div class="field">
       <label for="edNote">Megjegyzés</label>
-      <textarea id="edNote" maxlength="2000" placeholder="Árajánlat, link, ötlet, kinek kell szólni…"></textarea>
+      <textarea id="edNote" maxlength="2000" placeholder="Ötlet, méretek, kinek kell szólni…"></textarea>
     </div>
     <label class="check"><input type="checkbox" id="edStar"> Fontos, ezzel kezdjük</label>
     <div class="actions">
@@ -354,7 +442,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import {
   initializeFirestore, persistentLocalCache, persistentMultipleTabManager,
-  collection, doc, onSnapshot, addDoc, updateDoc, deleteDoc, writeBatch,
+  collection, doc, onSnapshot, addDoc, updateDoc, deleteDoc, setDoc, writeBatch,
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const YEARS = [2026, 2027, 2028, 2029, 2030];
@@ -370,6 +458,11 @@ const STATUSES = [
   { id: "folyamatban", label: "Folyamatban" },
   { id: "kesz", label: "Kész" },
 ];
+const PEOPLE = [
+  { id: "tomi", label: "Tomi", mono: "T" },
+  { id: "emese", label: "Emese", mono: "E" },
+  { id: "kozos", label: "Közös", mono: "T+E" },
+];
 const SEASONS = ["", "Tavasz", "Nyár", "Ősz", "Tél", "Egész évben"];
 // Starter list, loaded only when the user asks for it on an empty board.
 const STARTER = [
@@ -379,31 +472,74 @@ const STARTER = [
 ];
 const catLabel = id => (CATS.find(c => c.id === id) || CATS[3]).label;
 const stLabel = id => (STATUSES.find(s => s.id === id) || STATUSES[0]).label;
+const person = id => PEOPLE.find(p => p.id === id) || null;
 
 const $ = id => document.getElementById(id);
-const state = { items: [], filter: "all", hideDone: false, editing: null, loaded: false, user: null };
-let col = null;
-let unsub = null;
+const state = {
+  items: [], budgets: {}, filter: "all", owner: "all", q: "", hideDone: false,
+  editing: null, budgetEdit: null, loaded: false, user: null,
+};
+let col = null, budgetRef = null, fs = null;
+let unsubs = [];
 
 try { state.hideDone = localStorage.getItem("hideDone") === "1"; } catch (e) {}
 try { state.filter = localStorage.getItem("filter") || "all"; } catch (e) {}
+try { state.owner = localStorage.getItem("owner") || "all"; } catch (e) {}
 $("hideDone").checked = state.hideDone;
 
+// ---------- Helpers ----------
 const fmtFt = n => {
   if (!n) return "";
-  if (n >= 1e6) return (Math.round(n / 1e5) / 10).toLocaleString("hu-HU") + " M Ft";
-  if (n >= 1e3) return Math.round(n / 1e3).toLocaleString("hu-HU") + " e Ft";
-  return n.toLocaleString("hu-HU") + " Ft";
+  const neg = n < 0; n = Math.abs(n);
+  let s;
+  if (n >= 1e6) s = (Math.round(n / 1e5) / 10).toLocaleString("hu-HU") + " M Ft";
+  else if (n >= 1e3) s = Math.round(n / 1e3).toLocaleString("hu-HU") + " e Ft";
+  else s = n.toLocaleString("hu-HU") + " Ft";
+  return (neg ? "−" : "") + s;
 };
 const fmtWhen = ms => ms ? new Date(ms).toLocaleString("hu-HU", { year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }) : "";
+const parseDate = s => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s || ""); return m ? new Date(+m[1], +m[2] - 1, +m[3]) : null; };
+const today = () => { const d = new Date(); d.setHours(0, 0, 0, 0); return d; };
+const dayDiff = (a, b) => Math.round((a - b) / 86400000);
+const fmtDay = d => d.toLocaleDateString("hu-HU", { month: "short", day: "numeric" });
+function tripRange(item) {
+  const s = parseDate(item.startDate), e = parseDate(item.endDate);
+  if (!s) return "";
+  if (!e || +e === +s) return fmtDay(s);
+  const nights = dayDiff(e, s);
+  return fmtDay(s) + " – " + fmtDay(e) + " (" + nights + " éj)";
+}
+function countdown(item) {
+  const s = parseDate(item.startDate); if (!s) return null;
+  const e = parseDate(item.endDate) || s, t = today();
+  if (t >= s && t <= e) return { text: "Most tart", days: 0 };
+  const d = dayDiff(s, t);
+  if (d < 0) return null;
+  return { text: d === 0 ? "Ma indultok" : d === 1 ? "Holnap indultok" : d + " nap múlva", days: d };
+}
+// Cost that counts against the budget: the real one once known, otherwise the estimate.
+const effCost = i => i.actual || i.cost || 0;
+const norm = s => String(s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+function parseLinks(text) {
+  return String(text || "").split(/\r?\n/).map(l => l.trim()).filter(Boolean).map(line => {
+    const m = /(https?:\/\/\S+)/i.exec(line);
+    if (!m) return null;
+    const label = line.replace(m[1], "").replace(/[-–:|]\s*$/, "").trim();
+    let host = m[1];
+    try { host = new URL(m[1]).hostname.replace(/^www\./, ""); } catch (e) {}
+    return { url: m[1], label: label || host };
+  }).filter(Boolean);
+}
+const phoneOf = s => { const m = /\+?\d[\d\s\/-]{6,}\d/.exec(s || ""); return m ? m[0] : ""; };
+
 const el = (tag, attrs, ...kids) => {
   const n = document.createElement(tag);
   for (const k in attrs || {}) {
     if (k === "class") n.className = attrs[k];
     else if (k.startsWith("on")) n.addEventListener(k.slice(2), attrs[k]);
-    else if (attrs[k] !== null && attrs[k] !== undefined) n.setAttribute(k, attrs[k]);
+    else if (attrs[k] !== null && attrs[k] !== undefined && attrs[k] !== false) n.setAttribute(k, attrs[k]);
   }
-  for (const k of kids) if (k !== null && k !== undefined && k !== false) n.append(k);
+  for (const k of kids) if (k !== null && k !== undefined && k !== false && k !== "") n.append(k);
   return n;
 };
 
@@ -415,7 +551,7 @@ function toast(msg) {
 function showNotice(msg) { const n = $("notice"); n.className = "notice"; n.textContent = msg; n.hidden = !msg; }
 function errText(e) {
   const code = e && e.code || "";
-  if (code === "permission-denied") return "Ehhez a fiókhoz nincs hozzáférés.";
+  if (code === "permission-denied") return "Ehhez nincs hozzáférés. Frissítettétek a Firestore-szabályokat?";
   if (code === "resource-exhausted") return "Elértük az ingyenes napi keretet. Holnap újra működik.";
   return "Nem sikerült menteni. Próbáld újra.";
 }
@@ -426,35 +562,60 @@ $("quickYear").append(el("option", { value: "" }, "Még nincs év"));
 for (const y of YEARS) $("quickYear").append(el("option", { value: String(y) }, String(y)));
 for (const s of SEASONS) $("edSeason").append(el("option", { value: s }, s || "Nem tudjuk még"));
 
+// ---------- Filtering ----------
+function matchesQuery(i) {
+  if (!state.q) return true;
+  const hay = norm([i.title, i.note, i.place, i.contact, i.links, catLabel(i.cat), (i.tasks || []).map(t => t.t).join(" ")].join(" "));
+  return norm(state.q).split(/\s+/).filter(Boolean).every(w => hay.includes(w));
+}
+const inCat = i => state.filter === "all" || i.cat === state.filter;
+const inOwner = i => state.owner === "all" || (state.owner === "none" ? !i.owner : i.owner === state.owner);
 function visible() {
-  return state.items.filter(i => (state.filter === "all" || i.cat === state.filter) && !(state.hideDone && i.status === "kesz"));
+  return state.items.filter(i => inCat(i) && inOwner(i) && matchesQuery(i) && !(state.hideDone && i.status === "kesz"));
 }
 function sortItems(a, b) {
   return (a.status === "kesz") - (b.status === "kesz")
     || (b.star ? 1 : 0) - (a.star ? 1 : 0)
+    || (a.startDate || "9999").localeCompare(b.startDate || "9999")
     || (a.created || 0) - (b.created || 0);
 }
 
+// ---------- Rendering ----------
 function renderStats() {
-  const scoped = state.items.filter(i => state.filter === "all" || i.cat === state.filter);
-  const done = scoped.filter(i => i.status === "kesz").length;
-  const cost = scoped.reduce((s, i) => s + (i.cost || 0), 0);
+  const scoped = state.items.filter(i => inCat(i) && inOwner(i));
+  const done = scoped.filter(i => i.status === "kesz");
   const open = scoped.filter(i => i.status !== "kesz").reduce((s, i) => s + (i.cost || 0), 0);
+  const spent = scoped.reduce((s, i) => s + (i.actual || 0), 0);
+  const both = scoped.filter(i => i.actual && i.cost);
+  const est = both.reduce((s, i) => s + i.cost, 0), act = both.reduce((s, i) => s + i.actual, 0);
   const unscheduled = scoped.filter(i => !i.year).length;
-  const pct = scoped.length ? Math.round(done / scoped.length * 100) : 0;
-  $("stats").replaceChildren(
-    el("div", { class: "stat" }, el("b", null, String(scoped.length)), el("small", null, "terv")),
-    el("div", { class: "stat" }, el("b", null, String(unscheduled)), el("small", null, "még nincs éve")),
-    el("div", { class: "stat" }, el("b", null, fmtFt(open) || "0 Ft"), el("small", null, cost !== open ? "hátralévő költség" : "becsült költség")),
-    el("div", { class: "progress" },
-      el("div", { class: "lbls" }, el("span", null, "Megvalósítva"), el("span", null, done + " / " + scoped.length + " · " + pct + "%")),
-      el("div", { class: "bar" }, el("i", { style: "width:" + pct + "%" })))
-  );
+  const pct = scoped.length ? Math.round(done.length / scoped.length * 100) : 0;
+
+  const trips = state.items.map(i => ({ i, c: i.cat === "utazas" && i.status !== "kesz" ? countdown(i) : null }))
+    .filter(x => x.c).sort((a, b) => a.c.days - b.c.days);
+
+  const stat = (big, small, title) => el("div", { class: "stat", title }, el("b", null, big), el("small", null, small));
+  const parts = [
+    stat(String(scoped.length), "terv"),
+    stat(String(unscheduled), "még nincs éve"),
+    stat(fmtFt(open) || "0 Ft", "hátralévő becsült költség"),
+  ];
+  if (spent) parts.push(stat(fmtFt(spent), "eddig elköltve"));
+  if (both.length) {
+    const diff = Math.round((act - est) / est * 100);
+    parts.push(stat((diff > 0 ? "+" : "") + diff + "%", "tény a becsülthöz képest",
+      both.length + " tételnél van becsült és tényleges költség is"));
+  }
+  if (trips.length) parts.push(stat(trips[0].c.text, "következő út: " + (trips[0].i.place || trips[0].i.title)));
+  parts.push(el("div", { class: "progress" },
+    el("div", { class: "lbls" }, el("span", null, "Megvalósítva"), el("span", null, done.length + " / " + scoped.length + " · " + pct + "%")),
+    el("div", { class: "bar" }, el("i", { style: "width:" + pct + "%" }))));
+  $("stats").replaceChildren(...parts);
 }
 
 function renderYearsBar() {
   const nowY = new Date().getFullYear();
-  const counts = YEARS.map(y => state.items.filter(i => i.year === y && (state.filter === "all" || i.cat === state.filter)).length);
+  const counts = YEARS.map(y => state.items.filter(i => i.year === y && inCat(i) && inOwner(i)).length);
   const max = Math.max(1, ...counts);
   $("yearsbar").replaceChildren(...YEARS.map((y, idx) =>
     el("a", { href: "#y" + y, class: y === nowY ? "now" : "", title: counts[idx] + " terv" },
@@ -462,15 +623,26 @@ function renderYearsBar() {
 }
 
 function renderChips() {
+  const setF = (key, id) => { state[key] = id; try { localStorage.setItem(key, id); } catch (e) {} render(); };
   const mk = (id, label, n) => el("button", {
     type: "button", class: "chip", "data-cat": id === "all" ? null : id, "aria-pressed": String(state.filter === id),
-    onclick: () => { state.filter = id; try { localStorage.setItem("filter", id); } catch (e) {} render(); }
+    onclick: () => setF("filter", id)
   }, id === "all" ? null : el("span", { class: "dot" }), label, el("span", { class: "n" }, String(n)));
   $("chips").replaceChildren(
     mk("all", "Mind", state.items.length),
     ...CATS.map(c => mk(c.id, c.label, state.items.filter(i => i.cat === c.id).length)));
+
+  const mo = (id, label, mono, n) => el("button", {
+    type: "button", class: "chip" + (mono ? " person" : ""), "aria-pressed": String(state.owner === id),
+    onclick: () => setF("owner", id)
+  }, mono ? el("span", { class: "mono" }, mono) : null, label, el("span", { class: "n" }, String(n)));
+  $("ownerChips").replaceChildren(
+    mo("all", "Bárki", null, state.items.length),
+    ...PEOPLE.map(p => mo(p.id, p.label, p.mono, state.items.filter(i => i.owner === p.id).length)),
+    mo("none", "Nincs gazdája", null, state.items.filter(i => !i.owner).length));
 }
 
+const canDrag = window.matchMedia("(pointer: fine)").matches;
 function card(item) {
   const nextStatus = () => {
     const idx = STATUSES.findIndex(s => s.id === item.status);
@@ -480,32 +652,111 @@ function card(item) {
     type: "button", class: "status", "data-st": item.status, title: "Koppints a következő állapotért",
     onclick: e => { e.stopPropagation(); save(item.id, { status: nextStatus() }, true); }
   }, stLabel(item.status));
-  return el("div", {
+  const p = person(item.owner);
+  const tasks = item.tasks || [];
+  const tDone = tasks.filter(t => t.done).length;
+  const links = parseLinks(item.links);
+  const cd = item.cat === "utazas" && item.status !== "kesz" ? countdown(item) : null;
+
+  const costEl = item.actual
+    ? el("span", { class: "cost", title: "Tényleges költség" + (item.cost ? ", áthúzva a becsült" : "") },
+        item.cost && item.cost !== item.actual ? el("s", null, fmtFt(item.cost)) : null, fmtFt(item.actual))
+    : item.cost ? el("span", { class: "cost", title: "Becsült költség" }, fmtFt(item.cost)) : null;
+
+  const meta2 = [
+    tasks.length ? el("span", null, tDone + "/" + tasks.length + " lépés") : null,
+    links.length ? el("span", null, links.length + " link") : null,
+    item.contact ? el("span", null, "☎ " + item.contact.split(",")[0].slice(0, 30)) : null,
+    cd ? el("span", { class: "soon" }, cd.text) : null,
+  ].filter(Boolean);
+
+  const c = el("div", {
     class: "card" + (item.status === "kesz" ? " done" : ""), "data-cat": item.cat, role: "button", tabindex: "0",
+    draggable: canDrag ? "true" : null,
     onclick: () => openEditor(item), onkeydown: e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openEditor(item); } }
   },
-    el("div", { class: "row" }, el("span", { class: "title" }, item.title), item.star ? el("span", { class: "star", title: "Fontos" }, "★") : null),
+    el("div", { class: "row" },
+      el("span", { class: "title" }, item.title),
+      el("span", { style: "display:flex;gap:6px;align-items:center" },
+        item.star ? el("span", { class: "star", title: "Fontos" }, "★") : null,
+        p ? el("span", { class: "mono", title: "Intézi: " + p.label }, p.mono) : null)),
+    item.cat === "utazas" && (item.place || item.startDate)
+      ? el("div", { class: "trip" }, [item.place, tripRange(item)].filter(Boolean).join(" · ")) : null,
     item.note ? el("div", { class: "note" }, item.note) : null,
+    tasks.length ? el("div", { class: "minibar", title: tDone + " / " + tasks.length + " részfeladat kész" },
+      el("i", { style: "width:" + Math.round(tDone / tasks.length * 100) + "%" })) : null,
+    meta2.length ? el("div", { class: "meta2" }, ...meta2) : null,
     el("div", { class: "tags" },
       el("span", { class: "tag" }, catLabel(item.cat)),
       statusBtn,
       item.season ? el("span", { class: "season" }, item.season) : null,
-      item.cost ? el("span", { class: "cost" }, fmtFt(item.cost)) : null)
+      costEl)
   );
+  if (canDrag) {
+    c.addEventListener("dragstart", e => { e.dataTransfer.setData("text/plain", item.id); e.dataTransfer.effectAllowed = "move"; c.classList.add("dragging"); });
+    c.addEventListener("dragend", () => c.classList.remove("dragging"));
+  }
+  return c;
+}
+
+function budgetBlock(year) {
+  const budget = Number(state.budgets[String(year)]) || 0;
+  const planned = state.items.filter(i => i.year === year).reduce((s, i) => s + effCost(i), 0);
+  if (state.budgetEdit === year) {
+    const input = el("input", { type: "number", id: "budgetInput", min: "0", step: "100000", inputmode: "numeric",
+      value: budget ? String(budget) : "", placeholder: "pl. 4000000", "aria-label": year + " kerete forintban" });
+    const f = el("form", { onsubmit: e => { e.preventDefault(); saveBudget(year, Math.max(0, Math.round(Number(input.value) || 0))); } },
+      el("span", null, year + " kerete:"), input, el("span", null, "Ft"),
+      el("button", { class: "btn", type: "submit" }, "Mentés"),
+      el("button", { class: "btn ghost", type: "button", onclick: () => { state.budgetEdit = null; render(); } }, "Mégse"));
+    setTimeout(() => input.focus(), 20);
+    return el("div", { class: "budget" }, f);
+  }
+  const edit = el("button", { type: "button", class: "linkbtn", onclick: () => { state.budgetEdit = year; render(); } },
+    budget ? "Keret módosítása" : "+ Keret megadása");
+  if (!budget) {
+    return el("div", { class: "budget" }, el("div", { class: "blbl" },
+      planned ? el("span", null, "Tervezett: ", el("b", null, fmtFt(planned))) : null, edit));
+  }
+  const left = budget - planned, over = left < 0;
+  const pct = Math.min(100, Math.round(planned / budget * 100));
+  return el("div", { class: "budget" },
+    el("div", { class: "blbl" },
+      el("span", null, "Keret: ", el("b", null, fmtFt(planned) || "0 Ft"), " / " + fmtFt(budget)),
+      over ? el("span", { class: "over" }, "túllépés: " + fmtFt(-left)) : el("span", null, "marad: " + (fmtFt(left) || "0 Ft")),
+      edit),
+    el("div", { class: "bar", title: pct + "% a keretből" }, el("i", { class: over ? "over" : "ok", style: "width:" + pct + "%" })));
 }
 
 function section(key, heading, sub, items) {
-  const cost = items.reduce((s, i) => s + (i.cost || 0), 0);
+  const cost = items.reduce((s, i) => s + effCost(i), 0);
   const trips = items.filter(i => i.cat === "utazas").length;
   const meta = [items.length + " terv", trips ? trips + " utazás" : null, cost ? fmtFt(cost) : null].filter(Boolean).join(" · ");
+  const filtered = state.q || state.filter !== "all" || state.owner !== "all";
   const grid = items.length
     ? el("div", { class: "grid" }, ...items.map(card))
-    : el("div", { class: "empty" }, key === "inbox"
-        ? "Minden ötletnek van már éve. Új ötletet fent tudtok felvenni."
+    : el("div", { class: "empty" }, filtered ? "Nincs a szűrésnek megfelelő terv."
+        : key === "inbox" ? "Minden ötletnek van már éve. Új ötletet fent tudtok felvenni."
+        : canDrag ? "Erre az évre még nincs terv. Húzzatok ide egy kártyát, vagy nyissatok meg egyet, és válasszátok ki ezt az évet."
         : "Erre az évre még nincs terv. Nyissatok meg egy ötletet az ötletládából, és válasszátok ki ezt az évet.");
-  return el("section", { class: "year" + (key === "inbox" ? " inbox" : ""), id: key === "inbox" ? "inbox" : "y" + key },
-    el("div", { class: "yhead" }, el("h2", null, heading, sub ? el("small", null, sub) : null), el("span", { class: "meta" }, meta)),
+  const s = el("section", { class: "year" + (key === "inbox" ? " inbox" : ""), id: key === "inbox" ? "inbox" : "y" + key },
+    el("div", { class: "yhead" },
+      el("h2", null, heading, sub ? el("small", null, sub) : null),
+      el("span", { class: "meta" }, meta),
+      key === "inbox" ? null : budgetBlock(key)),
     grid);
+  if (canDrag) {
+    const target = key === "inbox" ? null : key;
+    s.addEventListener("dragover", e => { e.preventDefault(); e.dataTransfer.dropEffect = "move"; s.classList.add("drop"); });
+    s.addEventListener("dragleave", e => { if (!s.contains(e.relatedTarget)) s.classList.remove("drop"); });
+    s.addEventListener("drop", e => {
+      e.preventDefault(); s.classList.remove("drop");
+      const id = e.dataTransfer.getData("text/plain");
+      const it = state.items.find(i => i.id === id);
+      if (it && it.year !== target) { save(id, { year: target }, true); toast(it.title + " → " + (target || "Ötletláda")); }
+    });
+  }
+  return s;
 }
 
 function starterPrompt() {
@@ -527,7 +778,7 @@ function render() {
   board.replaceChildren(...parts);
 }
 
-// Editor
+// ---------- Editor ----------
 let draft = null;
 function segButtons(host, options, current, attr, onPick) {
   host.replaceChildren(...options.map(o => {
@@ -536,28 +787,79 @@ function segButtons(host, options, current, attr, onPick) {
     return b;
   }));
 }
+function paintTasks() {
+  $("edTasks").replaceChildren(...draft.tasks.map((t, idx) => {
+    const box = el("input", { type: "checkbox", "aria-label": "Kész" });
+    box.checked = !!t.done;
+    box.addEventListener("change", () => { t.done = box.checked; row.classList.toggle("done", t.done); });
+    const txt = el("input", { type: "text", maxlength: "200", "aria-label": "Részfeladat" });
+    txt.value = t.t;
+    txt.addEventListener("input", () => { t.t = txt.value; });
+    const row = el("div", { class: "task" + (t.done ? " done" : "") }, box, txt,
+      el("button", { type: "button", class: "x", title: "Törlés", "aria-label": "Részfeladat törlése",
+        onclick: () => { draft.tasks.splice(idx, 1); paintTasks(); } }, "×"));
+    return row;
+  }));
+}
+function paintLinks() {
+  $("edLinksOut").replaceChildren(...parseLinks($("edLinks").value).map(l =>
+    el("a", { href: l.url, target: "_blank", rel: "noopener noreferrer" }, "↗ " + l.label)));
+  const ph = phoneOf($("edContact").value);
+  $("edContactOut").replaceChildren(ph ? el("a", { class: "tel", href: "tel:" + ph.replace(/[\s\/-]/g, "") }, "☎ Hívás: " + ph) : "");
+}
 function paintEditor() {
   segButtons($("edCat"), CATS, draft.cat, "data-cat", v => { draft.cat = v; paintEditor(); });
   segButtons($("edYear"), [{ id: null, label: "Még nincs" }, ...YEARS.map(y => ({ id: y, label: String(y) }))], draft.year, null, v => { draft.year = v; paintEditor(); });
   segButtons($("edStatus"), STATUSES, draft.status, "data-st", v => { draft.status = v; paintEditor(); });
+  segButtons($("edOwner"), [{ id: "", label: "Senki" }, ...PEOPLE.map(p => ({ id: p.id, label: p.label }))], draft.owner, null, v => { draft.owner = v; paintEditor(); });
+  $("edTrip").hidden = draft.cat !== "utazas";
 }
 function openEditor(item) {
   state.editing = item ? item.id : null;
-  draft = { cat: item ? item.cat : "haz", year: item ? item.year || null : null, status: item ? item.status : "otlet" };
+  draft = {
+    cat: item ? item.cat : "haz", year: item ? item.year || null : null, status: item ? item.status : "otlet",
+    owner: item ? item.owner || "" : "", tasks: item ? (item.tasks || []).map(t => ({ ...t })) : [],
+  };
   $("edTitleH").textContent = item ? "Terv szerkesztése" : "Új terv";
   $("edWho").textContent = item && item.updatedBy ? "Utoljára módosította: " + item.updatedBy + ", " + fmtWhen(item.updated) : "";
   $("edTitle").value = item ? item.title : "";
   $("edSeason").value = item ? item.season || "" : "";
   $("edCost").value = item && item.cost ? String(item.cost) : "";
+  $("edActual").value = item && item.actual ? String(item.actual) : "";
+  $("edPlace").value = item ? item.place || "" : "";
+  $("edStart").value = item ? item.startDate || "" : "";
+  $("edEnd").value = item ? item.endDate || "" : "";
+  $("edContact").value = item ? item.contact || "" : "";
+  $("edLinks").value = item ? item.links || "" : "";
   $("edNote").value = item ? item.note || "" : "";
+  $("edNewTask").value = "";
   $("edStar").checked = !!(item && item.star);
   $("edDelete").hidden = !item;
   disarmDelete();
-  paintEditor();
+  paintEditor(); paintTasks(); paintLinks();
   $("overlay").hidden = false;
+  document.body.style.overflow = "hidden";  // keep the board still behind the sheet
+  $("editor").scrollTop = 0;
   setTimeout(() => $("edTitle").focus(), 30);
 }
-function closeEditor() { $("overlay").hidden = true; state.editing = null; }
+function closeEditor() { $("overlay").hidden = true; document.body.style.overflow = ""; state.editing = null; }
+
+$("edNewTask").addEventListener("keydown", e => {
+  if (e.key !== "Enter") return;
+  e.preventDefault();
+  const v = e.target.value.trim();
+  if (!v) return;
+  draft.tasks.push({ t: v, done: false });
+  e.target.value = "";
+  paintTasks();
+});
+$("edLinks").addEventListener("input", paintLinks);
+$("edContact").addEventListener("input", paintLinks);
+$("edStart").addEventListener("change", () => {
+  const s = parseDate($("edStart").value);
+  if (s && YEARS.includes(s.getFullYear())) { draft.year = s.getFullYear(); paintEditor(); }
+  if (s && !$("edEnd").value) $("edEnd").value = $("edStart").value;
+});
 
 let armT;
 function disarmDelete() { clearTimeout(armT); const b = $("edDelete"); b.classList.remove("armed"); b.textContent = "Törlés"; }
@@ -579,15 +881,26 @@ $("editor").addEventListener("submit", e => {
   e.preventDefault();
   const title = $("edTitle").value.trim();
   if (!title) { $("edTitle").focus(); return; }
-  const cost = Math.max(0, Math.round(Number($("edCost").value) || 0));
+  // A task typed but not yet confirmed with Enter should not be lost.
+  const pendingTask = $("edNewTask").value.trim();
+  if (pendingTask) draft.tasks.push({ t: pendingTask, done: false });
+  const num = id => Math.max(0, Math.round(Number($(id).value) || 0));
+  const trip = draft.cat === "utazas";
+  let startDate = trip ? $("edStart").value : "", endDate = trip ? $("edEnd").value : "";
+  if (startDate && endDate && endDate < startDate) endDate = startDate;
   const body = {
-    title, cat: draft.cat, year: draft.year, status: draft.status,
-    season: $("edSeason").value, cost, note: $("edNote").value.trim(), star: $("edStar").checked,
+    title, cat: draft.cat, year: draft.year, status: draft.status, owner: draft.owner,
+    season: $("edSeason").value, cost: num("edCost"), actual: num("edActual"),
+    place: trip ? $("edPlace").value.trim() : "", startDate, endDate,
+    tasks: draft.tasks.map(t => ({ t: t.t.trim(), done: !!t.done })).filter(t => t.t),
+    contact: $("edContact").value.trim(), links: $("edLinks").value.trim(),
+    note: $("edNote").value.trim(), star: $("edStar").checked,
   };
   const id = state.editing; closeEditor();
   if (id) save(id, body); else create(body);
 });
 
+// ---------- Toolbar ----------
 $("quick").addEventListener("submit", e => {
   e.preventDefault();
   const title = $("quickTitle").value.trim();
@@ -596,14 +909,42 @@ $("quick").addEventListener("submit", e => {
   create({ title, cat: $("quickCat").value, year: y ? Number(y) : null, status: "otlet", season: "", cost: 0, note: "", star: false });
   $("quickTitle").value = "";
 });
-
 $("hideDone").addEventListener("change", e => {
   state.hideDone = e.target.checked;
   try { localStorage.setItem("hideDone", state.hideDone ? "1" : "0"); } catch (err) {}
   render();
 });
+let searchT;
+$("search").addEventListener("input", e => {
+  clearTimeout(searchT);
+  searchT = setTimeout(() => { state.q = e.target.value.trim(); render(); }, 120);
+});
 
-// Persistence. Writes are fire-and-forget from the UI: the local cache shows them at once,
+function exportCsv() {
+  const cols = [
+    ["Megnevezés", i => i.title], ["Kategória", i => catLabel(i.cat)], ["Év", i => i.year || ""], ["Mikor", i => i.season],
+    ["Állapot", i => stLabel(i.status)], ["Ki intézi", i => (person(i.owner) || {}).label || ""],
+    ["Becsült költség (Ft)", i => i.cost || ""], ["Tényleges költség (Ft)", i => i.actual || ""],
+    ["Úti cél", i => i.place], ["Indulás", i => i.startDate], ["Hazaérkezés", i => i.endDate],
+    ["Részfeladatok", i => (i.tasks || []).map(t => (t.done ? "[x] " : "[ ] ") + t.t).join("\n")],
+    ["Kapcsolat", i => i.contact], ["Linkek", i => i.links], ["Megjegyzés", i => i.note], ["Fontos", i => i.star ? "igen" : ""],
+  ];
+  const cell = v => { const s = String(v ?? ""); return /[";\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
+  const rows = [...state.items].sort((a, b) => (a.year || 9999) - (b.year || 9999) || sortItems(a, b));
+  const lines = [cols.map(c => cell(c[0])).join(";"), ...rows.map(i => cols.map(c => cell(c[1](i))).join(";"))];
+  const budgetLines = YEARS.filter(y => state.budgets[String(y)]).map(y => cell(y + " kerete") + ";" + state.budgets[String(y)]);
+  if (budgetLines.length) lines.push("", ...budgetLines);
+  // BOM + semicolons so Hungarian Excel opens it with the accents and columns right.
+  const blob = new Blob(["﻿" + lines.join("\r\n")], { type: "text/csv;charset=utf-8" });
+  const a = el("a", { href: URL.createObjectURL(blob), download: "oteves-terv-" + new Date().toISOString().slice(0, 10) + ".csv" });
+  document.body.append(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+  toast("Letöltve: " + rows.length + " terv");
+}
+$("exportCsv").addEventListener("click", exportCsv);
+
+// ---------- Persistence ----------
+// Writes are fire-and-forget from the UI: the local cache shows them at once,
 // and Firestore syncs them when the phone is back online.
 const myName = () => (state.user && (state.user.displayName || state.user.email || "")).split(" ")[0] || "";
 function save(id, patch, quiet) {
@@ -616,6 +957,14 @@ function create(body) {
   addDoc(col, { ...body, created: now, updated: now, updatedBy: myName() }).catch(e => toast(errText(e)));
   toast("Hozzáadva: " + body.title);
 }
+function saveBudget(year, value) {
+  state.budgetEdit = null;
+  state.budgets = { ...state.budgets, [String(year)]: value };
+  render();
+  setDoc(budgetRef, { [String(year)]: value, updated: Date.now(), updatedBy: myName() }, { merge: true })
+    .catch(e => toast(errText(e)));
+  toast(value ? year + " kerete: " + fmtFt(value) : year + " kerete törölve");
+}
 async function loadStarter() {
   const batch = writeBatch(fs);
   const now = Date.now();
@@ -627,7 +976,7 @@ async function loadStarter() {
   catch (e) { toast(errText(e)); }
 }
 
-// Theme picker (palettes and modes live in window.appTheme, defined in <head>)
+// ---------- Theme picker (palettes and modes live in window.appTheme, defined in <head>) ----------
 const theme = window.appTheme;
 const MODES = [{ id: "auto", label: "Automatikus" }, { id: "light", label: "Világos" }, { id: "dark", label: "Sötét" }];
 function renderThemePicker() {
@@ -656,13 +1005,13 @@ function toggleThemePop(open) {
   $("themeBtn").setAttribute("aria-expanded", String(show));
 }
 $("themeBtn").addEventListener("click", e => { e.stopPropagation(); toggleThemePop(); });
-document.addEventListener("click", e => { 
+document.addEventListener("click", e => {
   // composedPath() still lists the anchor after a click re-rendered (and detached) the clicked swatch.
   if (!$("themePop").hidden && !e.composedPath().includes($("themePop").parentElement)) toggleThemePop(false);
 });
 document.addEventListener("keydown", e => { if (e.key === "Escape" && !$("themePop").hidden) toggleThemePop(false); });
 
-// Boot
+// ---------- Boot ----------
 function showGate(text, small, canSwitch) {
   $("app").hidden = true; $("gate").hidden = false;
   $("gateText").textContent = text;
@@ -680,8 +1029,9 @@ if (!firebaseConfig || !firebaseConfig.apiKey || firebaseConfig.apiKey.startsWit
 const fbApp = initializeApp(firebaseConfig);
 const auth = getAuth(fbApp);
 auth.languageCode = "hu";
-const fs = initializeFirestore(fbApp, { localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }) });
+fs = initializeFirestore(fbApp, { localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }) });
 col = collection(fs, "items");
+budgetRef = doc(fs, "settings", "budgets");
 
 getRedirectResult(auth).catch(e => { $("gateSmall").textContent = "A belépés nem sikerült: " + (e.code || e.message); });
 
@@ -701,9 +1051,25 @@ const doSignOut = () => signOut(auth);
 $("signOut").addEventListener("click", doSignOut);
 $("signOutGate").addEventListener("click", doSignOut);
 
+const str = v => typeof v === "string" ? v : "";
+function toItem(d) {
+  const x = d.data() || {};
+  return {
+    id: d.id, title: String(x.title || "Névtelen"), cat: CATS.some(c => c.id === x.cat) ? x.cat : "egyeb",
+    year: YEARS.includes(x.year) ? x.year : null, status: STATUSES.some(s => s.id === x.status) ? x.status : "otlet",
+    owner: PEOPLE.some(p => p.id === x.owner) ? x.owner : "",
+    season: str(x.season), cost: Number(x.cost) || 0, actual: Number(x.actual) || 0,
+    place: str(x.place), startDate: str(x.startDate), endDate: str(x.endDate),
+    tasks: Array.isArray(x.tasks) ? x.tasks.filter(t => t && typeof t.t === "string").map(t => ({ t: t.t, done: !!t.done })) : [],
+    contact: str(x.contact), links: str(x.links),
+    note: str(x.note), star: !!x.star, created: Number(x.created) || 0,
+    updated: Number(x.updated) || 0, updatedBy: str(x.updatedBy),
+  };
+}
+
 onAuthStateChanged(auth, user => {
-  if (unsub) { unsub(); unsub = null; }
-  state.user = user; state.items = []; state.loaded = false;
+  unsubs.forEach(u => u()); unsubs = [];
+  state.user = user; state.items = []; state.budgets = {}; state.loaded = false;
   if (!user) {
     showGate("Lépj be a Google-fiókoddal. Csak a mi két címünk fér hozzá.", "", false);
     return;
@@ -712,17 +1078,8 @@ onAuthStateChanged(auth, user => {
   $("who").textContent = user.email || "";
   showNotice("");
   render();
-  unsub = onSnapshot(col, snap => {
-    state.items = snap.docs.map(d => {
-      const x = d.data() || {};
-      return {
-        id: d.id, title: String(x.title || "Névtelen"), cat: CATS.some(c => c.id === x.cat) ? x.cat : "egyeb",
-        year: YEARS.includes(x.year) ? x.year : null, status: STATUSES.some(s => s.id === x.status) ? x.status : "otlet",
-        season: typeof x.season === "string" ? x.season : "", cost: Number(x.cost) || 0,
-        note: typeof x.note === "string" ? x.note : "", star: !!x.star, created: Number(x.created) || 0,
-        updated: Number(x.updated) || 0, updatedBy: typeof x.updatedBy === "string" ? x.updatedBy : "",
-      };
-    });
+  unsubs.push(onSnapshot(col, snap => {
+    state.items = snap.docs.map(toItem);
     state.loaded = true;
     render();
   }, err => {
@@ -734,7 +1091,18 @@ onAuthStateChanged(auth, user => {
       showNotice("Nem sikerült betölteni a terveket (" + err.code + "). Töltsd újra az oldalt.");
       render();
     }
-  });
+  }));
+  unsubs.push(onSnapshot(budgetRef, snap => {
+    const x = snap.exists() ? snap.data() : {};
+    const b = {};
+    for (const y of YEARS) if (Number(x[String(y)]) > 0) b[String(y)] = Number(x[String(y)]);
+    state.budgets = b;
+    if (state.loaded) render();
+  }, err => {
+    if (err.code === "permission-denied") {
+      showNotice("A költségkeretekhez frissíteni kell a Firestore-szabályokat (lásd firestore.rules). A tervek addig is működnek.");
+    }
+  }));
 });
 
 if ("serviceWorker" in navigator) {
